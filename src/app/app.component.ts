@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'alicks';
+  toggle = () => {
+    if (this.title === 'alicks'){
+      this.title = 'skcila'
+    }else {
+      this.title='alicks'
+    }
+  }
 }
