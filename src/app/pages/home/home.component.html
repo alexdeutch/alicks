@@ -1,35 +1,17 @@
 <body>
-<!-- <p>alice and alex rate, write, and review</p>
-<h1>BOSTON</h1>
-<h2>COFFEE</h2>
-<h3 style='display: inline;'>Three Little Figs</h3><span style='border-radius:5px; margin-left:10px; padding:3px; background-color: green;'>good</span>
-<h3>Diesel Cafe</h3>
-<h3>1369 Coffeehouse - Central</h3>
-<h3>1369 Coffeehouse - Inman</h3>
-<p>we love coffe</p>
-<h1>NEW YORK</h1>
-<h2>COFFEE</h2>
-<h3>Colina Cuervo</h3>
-<h3>Hungry Ghost Coffee - Park Slope</h3>
-<h3>Velvette Brew</h3>
-<h3>Little Zelda</h3>
-<h3>Lincoln Station</h3>
-<h3>Aura Coffee</h3>
-<h3>Konditori</h3> -->
-
-<div *ngFor="let city of cities">
-    <h1>{{city.name}}</h1>
-    <div *ngFor="let type of city.types">
-        <h2>{{type.name}}</h2>
-        <div *ngFor="let place of type.places" class="type">
-            <h3>
-                {{place.name}}
-                <span class="rate {{place.rateAlex}} alex">{{place.rateAlex}}</span>
-                <span class="rate {{place.rateAlice}} alice">{{place.rateAlice}}</span>
-            </h3>
+    <div class="reviewContainer" *ngFor="let city of cities">
+        <h1>{{city.name}}</h1>
+        <div *ngFor="let type of city.types">
+            <h2>{{type.name}} <button *ngIf="!expanded" (click)="expand()" class="accordion">&#709;</button><button *ngIf="expanded" (click)="expand()" class="accordion">&#708;</button></h2>
+            <div *ngFor="let place of type.places" id="type" class="type">
+                <h3>
+                    {{place.name}}
+                    <span class="rate {{place.rateAlex}} alex">{{place.rateAlex}}</span>
+                    <span class="rate {{place.rateAlice}} alice">{{place.rateAlice}}</span>
+                </h3>
                 <p class="review alex">{{place.reviewAlex}}</p>
                 <p class="review alice">{{place.reviewAlice}}</p>
+            </div>
         </div>
     </div>
-</div>
 </body>

@@ -12,6 +12,8 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  expanded = false;
+
   cities = [
     {
       name:'New York',
@@ -19,7 +21,7 @@ export class HomeComponent implements OnInit {
         {
           name: 'Coffee',
           places: [
-            {name: 'Colina Cuervo', rateAlex:'good', rateAlice:'good', reviewAlex: "It tastes very good and they do capuccino right and they sell counter culture which i don't like very much but it's fine. -alex"},
+            {name: 'Colina Cuervo', rateAlex:'good', rateAlice:'good', reviewAlex: "'It tastes very good and they do capuccino right and they sell counter culture which i don't like very much but it's fine.' -alex"},
             {name: 'Hungry Ghost', rateAlex:'bad', reviewAlex: "ew. -alex", reviewAlice: ":)"},
             {name: 'Lincoln Station', rateAlex:'bad', reviewAlex: "ew. -alex"},
             {name: 'Velvette Brew', rateAlex:'bad', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
@@ -52,4 +54,11 @@ export class HomeComponent implements OnInit {
       ]
     }
   ]
+
+  expand = () => {
+    this.expanded = !this.expanded;
+    
+  }
+
+  
 }
