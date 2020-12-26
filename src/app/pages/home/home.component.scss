@@ -7,3 +7,30 @@ body{
 h1, h2, h3{
     font-weight: 100;
 }
+.type{
+    padding-left:50px;
+}
+.review{
+    padding-left: 25px;
+}
+.alex{
+    font-family: 'Jost';
+}
+.alice{
+    font-family: 'Arial';
+}
+.rate{
+    border-radius:5px;
+    margin-left:10px;
+    padding:5px;
+}
+
+.bad{
+    background-color: rgb(228, 26, 26);
+}
+.neutral{
+    background-color:rgb(252, 252, 95);
+}
+.good{
+    background-color: rgb(19, 180, 19);
+}
