@@ -1,16 +1,18 @@
 <body>
     <div class="reviewContainer" *ngFor="let city of cities">
         <h1>{{city.name}}</h1>
-        <div *ngFor="let type of city.types">
-            <h2>{{type.name}} <button *ngIf="!expanded" (click)="expand()" class="accordion">&#709;</button><button *ngIf="expanded" (click)="expand()" class="accordion">&#708;</button></h2>
-            <div *ngFor="let place of type.places" id="type" class="type">
-                <h3>
-                    {{place.name}}
-                    <span class="rate {{place.rateAlex}} alex">{{place.rateAlex}}</span>
-                    <span class="rate {{place.rateAlice}} alice">{{place.rateAlice}}</span>
-                </h3>
-                <p class="review alex">{{place.reviewAlex}}</p>
-                <p class="review alice">{{place.reviewAlice}}</p>
+        <div *ngFor="let type of city.types; let i = index">
+            <h2>{{type.name}} <button *ngIf="!checkState(city.id, type.id)" (click)="expand(city.id, type.id)" class="accordion">+</button><button *ngIf="checkState(city.id, type.id)" (click)="expand(city.id, type.id)" class="accordion">&minus;</button></h2>
+            <div id="{{city.id}}{{type.id}}Container" class="typeContainer">
+                <div *ngFor="let place of type.places" id="type" class="type">
+                    <h3>
+                        {{place.name}}
+                        <span class="rate {{place.rateAlex}} alex">{{place.rateAlex}}</span>
+                        <span class="rate {{place.rateAlice}} alice">{{place.rateAlice}}</span>
+                    </h3>
+                    <p class="review alex">{{place.reviewAlex}}</p>
+                    <p class="review alice">{{place.reviewAlice}}</p>
+                </div>
             </div>
         </div>
     </div>

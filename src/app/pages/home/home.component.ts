@@ -9,6 +9,8 @@ export class HomeComponent implements OnInit {
 
   constructor() { }
 
+  
+
   ngOnInit(): void {
   }
 
@@ -16,9 +18,11 @@ export class HomeComponent implements OnInit {
 
   cities = [
     {
+      id: 'newyork',
       name:'New York',
       types: [
         {
+          id: 'coffee',
           name: 'Coffee',
           places: [
             {name: 'Colina Cuervo', rateAlex:'good', rateAlice:'good', reviewAlex: "'It tastes very good and they do capuccino right and they sell counter culture which i don't like very much but it's fine.' -alex"},
@@ -35,9 +39,11 @@ export class HomeComponent implements OnInit {
       ]
     },
     {
+      id: 'boston',
       name: 'Boston',
       types: [
         {
+          id: 'coffee',
           name: 'Coffee',
           places: [
             {name: 'Three Little Figs', rate:'good', review: ""},
@@ -55,10 +61,33 @@ export class HomeComponent implements OnInit {
     }
   ]
 
-  expand = () => {
-    this.expanded = !this.expanded;
-    
+  expand = (city, type) => {
+    if (this.state[`${city}${type}Expanded`]) {
+      document.getElementById(`${city}${type}Container`).style.maxHeight = "0px";
+      document.getElementById(`${city}${type}Container`).style.opacity = "0";
+    } else {
+      document.getElementById(`${city}${type}Container`).style.maxHeight = `${document.getElementById(`${city}${type}Container`).scrollHeight}px`;
+      document.getElementById(`${city}${type}Container`).style.opacity = "1";
+    }
+    this.state[`${city}${type}Expanded`] = !this.state[`${city}${type}Expanded`];
   }
 
-  
+  initializeState = (data) => {
+    let state = {};
+    data.forEach(city => {
+      city.types.forEach(type => {
+        state[`${city.id}${type.id}Expanded`] = false
+      });
+    });
+    return state;
+  }
+
+  checkState = (city, type) => {
+    return this.state[`${city}${type}Expanded`]
+  }
+
+  parseCsvToJson = (csv) => {
+    console.log(csv);
+    return csv;
+  }
 }
