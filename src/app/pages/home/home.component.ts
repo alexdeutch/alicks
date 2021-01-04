@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +14,17 @@ export class HomeComponent implements OnInit {
   reviews;
 
   ngOnInit(): void {
-    this.httpClient.get("../../assets/reviews.csv").subscribe(data =>{
+    const options: {
+      headers?: HttpHeaders;
+      observe?: 'body';
+      params?: HttpParams;
+      reportProgress?: boolean;
+      responseType: 'text';
+      withCredentials?: boolean;
+    } = {
+      responseType: 'text'
+    };
+    this.httpClient.get("https://docs.google.com/spreadsheets/d/1qUDdhcgmiXcHQ-bebcYgawFxdUxlP2mEXrLhEZG9V30/export?format=csv", options).subscribe(data =>{
       this.reviews = this.parseCsvToJson(data);
     })
     this.state = this.initializeState(this.cities)
