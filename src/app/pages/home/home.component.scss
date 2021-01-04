@@ -21,34 +21,48 @@ body{
             color: rgb(199, 33, 33);
         }
         h1, h2 {
-            font-weight: 100;
+            font-weight: 200;
         }
 
         p {
             margin: 3px 0px 0px 0px;
         }
 
-        .closed {
+        .typeContainer {
+            overflow: hidden;
+            height: auto;
+            max-height: 0px;
+            opacity: 0;
+            transition-property: max-height, opacity;
+            transition-duration: .1s;
+            transition-timing-function: linear;
+        }
+
+        .typeContainer:after {
+            overflow: hidden;
             height: 0px;
+            transition: height 0.4s ease;
         }
 
         .type{
             margin: 10px 0px;
             padding: 10px;
-            background-color: rgb(228, 195, 174);
-            border-radius:5px;
+            border: black;
+            border-width: 1px;
+            border-style: solid;
 
             h3 {
-                font-weight: 100;
+                font-weight: 200;
                 margin: 0px 0px 5px 0px;
             }
 
             .alex {
                 font-family: 'Jost';
+                font-weight: 200;
             }
 
             .alice {
-                font-family: 'Arial';
+                font-family: 'Arial Narrow';
             }
 
             .rate {

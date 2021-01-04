@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) {}
+
+  state;
+  reviews;
 
   ngOnInit(): void {
+    this.httpClient.get("../../assets/reviews.csv").subscribe(data =>{
+      this.reviews = this.parseCsvToJson(data);
+    })
+    this.state = this.initializeState(this.cities)
+
   }
 
   expanded = false;
@@ -30,6 +39,8 @@ export class HomeComponent implements OnInit {
             {name: 'Konditori', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
             {name: 'Cafe Auburndale', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
             {name: 'GREY Coffee', rateAlex:'bad', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
+            {name: 'OS Cafe', rateAlex:'good', rateAlice:'good', reviewAlex: "'Very small and they roast their own coffee???? Also it was a nice day.' -alex", reviewAlice: "'yummy cappucino.' -alice"},
+
           ]
         }
       ]
@@ -55,9 +66,46 @@ export class HomeComponent implements OnInit {
     }
   ]
 
-  expand = () => {
-    this.expanded = !this.expanded;
-    
+  expand = (city, type) => {
+    if (this.state[`${city}${type}Expanded`]) {
+      document.getElementById(`${city}${type}Container`).style.maxHeight = "0px";
+      document.getElementById(`${city}${type}Container`).style.opacity = "0";
+    } else {
+      document.getElementById(`${city}${type}Container`).style.maxHeight = `${document.getElementById(`${city}${type}Container`).scrollHeight}px`;
+      document.getElementById(`${city}${type}Container`).style.opacity = "1";
+    }
+    this.state[`${city}${type}Expanded`] = !this.state[`${city}${type}Expanded`];
+  }
+
+  initializeState = (data) => {
+    let state = {};
+    data.forEach(city => {
+      let newCity = ''
+      for (var i = 0; i < city.name.length; i++) {
+        city.name.charAt(i) != ' ' ? newCity = newCity + city.name.charAt(i) : null;
+      }
+      city.types.forEach(type => {
+        state[`${newCity}${type.name}Expanded`] = false
+      });
+    });
+    return state;
+  }
+
+  checkState = (city, type) => {
+    return this.state[`${city}${type}Expanded`]
+  }
+
+  getClass = (city, type) => {
+    if(this.state[`${city}${type}Expanded`]) {
+      return 'typeContainerExpanded'
+    }else{
+      return 'typeContainerClosed'
+    }
+  }
+
+  parseCsvToJson = (csv) => {
+    console.log(csv);
+    return csv;
   }
 
   
