@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -7,11 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) {}
 
-  
+  state;
+  reviews;
 
   ngOnInit(): void {
+    this.httpClient.get("../../assets/reviews.csv").subscribe(data =>{
+      this.reviews = this.parseCsvToJson(data);
+    })
+    this.state = this.initializeState(this.cities)
   }
 
   expanded = false;
@@ -34,6 +40,8 @@ export class HomeComponent implements OnInit {
             {name: 'Konditori', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
             {name: 'Cafe Auburndale', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
             {name: 'GREY Coffee', rateAlex:'bad', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
+            {name: 'OS Cafe', rateAlex:'good', rateAlice:'good', reviewAlex: "'Very small and they roast their own coffee???? Also it was a nice day.' -alex", reviewAlice: "'yummy cappucino.' -alice"},
+
           ]
         }
       ]
