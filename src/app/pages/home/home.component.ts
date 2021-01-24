@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -12,59 +12,27 @@ export class HomeComponent implements OnInit {
 
   state;
   reviews;
-
-  ngOnInit(): void {
-    this.httpClient.get("../../assets/reviews.csv").subscribe(data =>{
-      this.reviews = this.parseCsvToJson(data);
-    })
-    this.state = this.initializeState(this.cities)
-
-  }
-
+  cities;
   expanded = false;
 
-  cities = [
-    {
-      name:'New York',
-      types: [
-        {
-          name: 'Coffee',
-          places: [
-            {name: 'Colina Cuervo', rateAlex:'good', rateAlice:'good', reviewAlex: "'It tastes very good and they do capuccino right and they sell counter culture which i don't like very much but it's fine.' -alex"},
-            {name: 'Hungry Ghost', rateAlex:'bad', reviewAlex: "ew. -alex", reviewAlice: ":)"},
-            {name: 'Lincoln Station', rateAlex:'bad', reviewAlex: "ew. -alex"},
-            {name: 'Velvette Brew', rateAlex:'bad', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
-            {name: 'Little Zelda', rateAlex:'bad', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
-            {name: 'Aura Coffee', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
-            {name: 'Konditori', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
-            {name: 'Cafe Auburndale', rateAlex:'neutral', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
-            {name: 'GREY Coffee', rateAlex:'bad', reviewAlex: "they try so hard to make this look like it will be good but it is so bad. -alex"},
-            {name: 'OS Cafe', rateAlex:'good', rateAlice:'good', reviewAlex: "'Very small and they roast their own coffee???? Also it was a nice day.' -alex", reviewAlice: "'yummy cappucino.' -alice"},
+  ngOnInit(): void {
+    const options: {
+      headers?: HttpHeaders;
+      observe?: 'body';
+      params?: HttpParams;
+      reportProgress?: boolean;
+      responseType: 'text';
+      withCredentials?: boolean;
+    } = {
+      responseType: 'text'
+    };
 
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Boston',
-      types: [
-        {
-          name: 'Coffee',
-          places: [
-            {name: 'Three Little Figs', rate:'good', review: ""},
-            {name: 'Diesel Cafe', rate:'bad', review: ""},
-            {name: '1369 Coffeehouse', rate:'good', review: ""},
-            {name: 'Revival Cafe + Kitchen', rate:'bad', review: ""},
-            {name: 'True Grounds', rate:'good', review: ""},
-            {name: 'Clover', rate:'neutral', review: ""},
-            {name: 'Union Square Donuts', rate:'good', review: ""},
-            {name: 'Pavement', rate:'good', review: ""},
-            {name: 'Cafe Zing', rate:'bad', review: ""},
-          ]
-        }
-      ]
-    }
-  ]
+    this.httpClient.get("https://docs.google.com/spreadsheets/d/1qUDdhcgmiXcHQ-bebcYgawFxdUxlP2mEXrLhEZG9V30/export?format=csv", options).toPromise().then(data => {
+      const jsonArr = this.parseCsvToJson(data);
+      this.cities = this.createStruct(jsonArr);
+      this.state = this.initializeState(this.cities)
+    })
+  }
 
   expand = (city, type) => {
     if (this.state[`${city}${type}Expanded`]) {
@@ -80,12 +48,8 @@ export class HomeComponent implements OnInit {
   initializeState = (data) => {
     let state = {};
     data.forEach(city => {
-      let newCity = ''
-      for (var i = 0; i < city.name.length; i++) {
-        city.name.charAt(i) != ' ' ? newCity = newCity + city.name.charAt(i) : null;
-      }
       city.types.forEach(type => {
-        state[`${newCity}${type.name}Expanded`] = false
+        state[`${city.id}${type.id}Expanded`] = false
       });
     });
     return state;
@@ -95,18 +59,67 @@ export class HomeComponent implements OnInit {
     return this.state[`${city}${type}Expanded`]
   }
 
-  getClass = (city, type) => {
-    if(this.state[`${city}${type}Expanded`]) {
-      return 'typeContainerExpanded'
-    }else{
-      return 'typeContainerClosed'
-    }
+  toLowerRemoveSpace = (str) => {
+    const strLower = str.toLowerCase();
+    const strFinal = strLower.replace(/\s+/g, '');
+    return strFinal;
   }
 
   parseCsvToJson = (csv) => {
-    console.log(csv);
-    return csv;
+    var csvJson = [];
+    var row = 0;
+    var baseObj = {};
+    var rowObj = {};
+    var str = '';
+    var index = 0;
+    for (var i = 0; i <= csv.length; i++) { 
+      if (csv.charAt(i) != ',' && csv.charAt(i) != '\n') {
+        str = str + csv.charAt(i);
+        if (i === csv.length) {
+          rowObj[Object.keys(rowObj)[index]] = str, csvJson.push(rowObj);
+        }
+      }
+      if (csv.charAt(i) === ',') {
+        row === 0 ? baseObj[str] = '' : (rowObj[Object.keys(rowObj)[index]] = str, index++);
+        str = '';
+      }
+      if (csv.charAt(i) === '\n') {
+        str = str.substring(0, str.length - 1)
+        row === 0 ? baseObj[str] = '' : (rowObj[Object.keys(rowObj)[index]] = str, csvJson.push(rowObj));
+        str = '';
+        index = 0;
+        rowObj = {...baseObj}
+        row++;
+      }
+    }
+    return csvJson;
   }
 
-  
+  //needs to be refactored
+  createStruct = (jsonArr) => {
+    var final = [];
+    var dataContainer = {};
+    jsonArr.forEach(el => {
+      if(!dataContainer[el.city]) {
+        dataContainer[el.city] = {};
+      }
+      if(!dataContainer[el.city][el.type]) {
+        dataContainer[el.city][el.type] = [];
+      }
+      dataContainer[el.city][el.type].push({name: el.place, rateAlex: el.rateAlex, rateAlice: el.rateAlice, reviewAlex: el.reviewAlex, reviewAlice: el.reviewAlice});
+    });
+    const cities = Object.keys(dataContainer)
+    var index = 0;
+    cities.forEach(city => {
+      final.push({id: this.toLowerRemoveSpace(city), name: city})
+      const types = Object.keys(dataContainer[city])
+      final[index]['types'] = [];
+      types.forEach(type => {
+        const placesArr = dataContainer[city][type]
+        final[index]['types'].push({id: this.toLowerRemoveSpace(type), name: type, places: placesArr});
+      })
+      index++;
+    })
+    return final;
+  }
 }

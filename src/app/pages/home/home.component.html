@@ -2,8 +2,8 @@
     <div class="reviewContainer" *ngFor="let city of cities">
         <h1>{{city.name}}</h1>
         <div *ngFor="let type of city.types; let i = index">
-            <h2>{{type.name}} <button *ngIf="!checkState(city.name, type.name)" (click)="expand(city.name, type.name)" class="accordion">+</button><button *ngIf="checkState(city.name, type.name)" (click)="expand(city.name, type.name)" class="accordion">&minus;</button></h2>
-            <div id="{{city.name}}{{type.name}}Container" class="typeContainer">
+            <h2>{{type.name}} <button *ngIf="!checkState(city.id, type.id)" (click)="expand(city.id, type.id)" class="accordion">+</button><button *ngIf="checkState(city.id, type.id)" (click)="expand(city.id, type.id)" class="accordion">&minus;</button></h2>
+            <div id="{{city.id}}{{type.id}}Container" class="typeContainer">
                 <div *ngFor="let place of type.places" id="type" class="type">
                     <h3>
                         {{place.name}}
